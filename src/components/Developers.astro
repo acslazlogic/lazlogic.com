@@ -1,0 +1,199 @@
+---
+const python = `<span class="k">import</span> lazlogic <span class="k">as</span> ll
+
+site <span class="o">=</span> ll.Dataset.<span class="f">upload</span>(<span class="s">"corridor_2026-09.laz"</span>, crs<span class="o">=</span><span class="s">"EPSG:7856"</span>)
+site.<span class="f">classify</span>(model<span class="o">=</span><span class="s">"urban"</span>)
+
+<span class="c"># Every pole within 3 m of tall vegetation</span>
+risks <span class="o">=</span> (
+    site.<span class="f">features</span>(<span class="s">"pole"</span>)
+        .<span class="f">near</span>(<span class="s">"high_vegetation"</span>, within<span class="o">=</span><span class="n">3.0</span>)
+        .<span class="f">with_attributes</span>(<span class="s">"height"</span>, <span class="s">"clearance"</span>)
+)
+
+risks.<span class="f">to_geojson</span>(<span class="s">"vegetation_risk.geojson"</span>)
+<span class="f">print</span>(<span class="s">f"</span>{<span class="f">len</span>(risks)}<span class="s"> poles flagged"</span>)`;
+
+const rest = `<span class="f">curl</span> -X POST https://api.lazlogic.com/v1/datasets/ds_8f2k/query \\
+  -H <span class="s">"Authorization: Bearer $LAZLOGIC_TOKEN"</span> \\
+  -H <span class="s">"Content-Type: application/json"</span> \\
+  -d <span class="s">'{
+    "features": "pole",
+    "near": { "class": "high_vegetation", "within": 3.0 },
+    "attributes": ["height", "clearance"],
+    "format": "geojson"
+  }'</span>
+
+<span class="c"># → 202 Accepted  { "job": "qj_41xa", "status": "running" }</span>
+<span class="c"># → webhook: query.completed  { "features": 128 }</span>`;
+
+const points = [
+  'Python & TypeScript SDKs, plus a plain REST API',
+  'Webhooks for upload, classification and query events',
+  'Open formats in and out: COPC, 3D Tiles, OGC API',
+  'Bring your own bucket: data stays in your cloud',
+];
+---
+
+<section class="section" id="developers">
+  <div class="container dev">
+    <div class="dev__copy">
+      <div class="dev__eyebrow reveal">
+        <span class="eyebrow">Developers</span>
+        <span class="badge-soon">API & SDK coming soon</span>
+      </div>
+      <h2 class="reveal">Built API-first</h2>
+      <p class="lede reveal">
+        Treat a city-scale scan like a database. Query features, run analysis and wire results into the systems
+        you already run, in a few lines of code. Here's a preview of what's coming.
+      </p>
+      <ul class="dev__list reveal">
+        {points.map((p) => <li>{p}</li>)}
+      </ul>
+    </div>
+
+    <div class="code reveal" data-code>
+      <div class="code__bar">
+        <div class="code__tabs" role="tablist" aria-label="Code examples">
+          <button role="tab" aria-selected="true" aria-controls="code-py" id="code-tab-py" class="mono">Python</button>
+          <button role="tab" aria-selected="false" aria-controls="code-rest" id="code-tab-rest" class="mono" tabindex="-1">REST</button>
+        </div>
+        <span class="mono code__preview">Preview</span>
+        <span class="mono muted" data-file>vegetation_risk.py</span>
+      </div>
+      <pre id="code-py" role="tabpanel" aria-labelledby="code-tab-py"><code set:html={python} /></pre>
+      <pre id="code-rest" role="tabpanel" aria-labelledby="code-tab-rest" hidden><code set:html={rest} /></pre>
+    </div>
+  </div>
+</section>
+
+<style>
+  .dev {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: clamp(40px, 6vw, 88px);
+    align-items: center;
+  }
+  .dev__copy {
+    display: grid;
+    gap: 24px;
+  }
+  .dev__eyebrow {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  .dev__list {
+    margin: 12px 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 14px;
+    color: var(--text-2);
+  }
+  .dev__list li {
+    display: flex;
+    gap: 14px;
+    align-items: baseline;
+  }
+  .dev__list li::before {
+    content: '→';
+    font-family: var(--font-mono);
+    color: var(--accent);
+  }
+  .code {
+    border: 1px solid var(--hairline-strong);
+    border-radius: var(--radius);
+    background: #070808;
+    overflow: hidden;
+    box-shadow: 0 30px 80px -40px rgb(61 245 196 / 0.25);
+  }
+  .code__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 14px 10px 10px;
+    border-bottom: 1px solid var(--hairline);
+    background: var(--bg-raised);
+    font-size: 11px;
+  }
+  .code__tabs {
+    display: flex;
+    gap: 4px;
+  }
+  .code__preview {
+    margin-left: auto;
+    color: var(--amber);
+    font-size: 10.5px;
+  }
+  .code__tabs button {
+    padding: 6px 12px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-3);
+    font-size: 11px;
+    cursor: pointer;
+  }
+  .code__tabs button[aria-selected='true'] {
+    background: var(--chip);
+    color: var(--text);
+  }
+  pre {
+    margin: 0;
+    padding: 26px 24px 30px;
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: 13.5px;
+    line-height: 1.75;
+    color: #d6dcdb;
+    tab-size: 4;
+  }
+  pre[hidden] {
+    display: none;
+  }
+  pre :global(.k) {
+    color: #ff7ab8;
+  }
+  pre :global(.s) {
+    color: #a6e88a;
+  }
+  pre :global(.n) {
+    color: var(--amber);
+  }
+  pre :global(.f) {
+    color: var(--accent);
+  }
+  pre :global(.o) {
+    color: #8a96ff;
+  }
+  pre :global(.c) {
+    color: #5f6867;
+    font-style: italic;
+  }
+  @media (max-width: 960px) {
+    .dev {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-code]')!;
+  const tabs = [...root.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+  const file = root.querySelector('[data-file]')!;
+  const names: Record<string, string> = { 'code-py': 'vegetation_risk.py', 'code-rest': 'query.sh' };
+  for (const tab of tabs) {
+    tab.addEventListener('click', () => {
+      for (const t of tabs) {
+        const on = t === tab;
+        t.setAttribute('aria-selected', String(on));
+        t.tabIndex = on ? 0 : -1;
+        document.getElementById(t.getAttribute('aria-controls')!)!.hidden = !on;
+      }
+      file.textContent = names[tab.getAttribute('aria-controls')!];
+    });
+  }
+</script>

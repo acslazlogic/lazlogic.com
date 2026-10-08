@@ -1,0 +1,226 @@
+---
+import { SITE } from '../config';
+
+const captures = ['Mobile lidar', 'Aerial / drone lidar', 'Terrestrial scanning', 'Photogrammetry', 'Several of these', 'Not capturing yet'];
+---
+
+<section class="section demo" id="demo">
+  <div class="container demo__grid">
+    <div class="demo__copy">
+      <span class="eyebrow reveal">Book a demo</span>
+      <h2 class="reveal">See it on your scans</h2>
+      <p class="lede reveal">
+        Send us a dataset and the question you need answered. We will walk you through LazLogic running on your
+        own data, not a canned demo.
+      </p>
+      <p class="demo__direct reveal">
+        <span class="mono muted">Prefer email?</span>
+        <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+      </p>
+    </div>
+
+    <form class="card form reveal" data-demo-form data-endpoint={SITE.formEndpoint} data-email={SITE.email} novalidate>
+      <div class="form__row">
+        <label>
+          <span>First name</span>
+          <input name="firstName" autocomplete="given-name" required />
+        </label>
+        <label>
+          <span>Last name</span>
+          <input name="lastName" autocomplete="family-name" required />
+        </label>
+      </div>
+      <label>
+        <span>Work email</span>
+        <input name="email" type="email" autocomplete="email" required />
+      </label>
+      <label>
+        <span>Company</span>
+        <input name="company" autocomplete="organization" required />
+      </label>
+      <label>
+        <span>What do you capture?</span>
+        <select name="capture" required>
+          <option value="" disabled selected>Select one</option>
+          {captures.map((c) => <option>{c}</option>)}
+        </select>
+      </label>
+      <label>
+        <span>What would you like to answer? <em class="muted">(optional)</em></span>
+        <textarea name="message" rows="3"></textarea>
+      </label>
+      <!-- Honeypot for naive bots. -->
+      <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" class="sr-only" aria-hidden="true" />
+      <button class="btn btn--primary" type="submit">Request a demo</button>
+      <p class="form__status mono" role="status" aria-live="polite" data-status></p>
+    </form>
+  </div>
+</section>
+
+<style>
+  .demo__grid {
+    display: grid;
+    grid-template-columns: 1fr minmax(0, 520px);
+    gap: clamp(40px, 6vw, 96px);
+    align-items: start;
+  }
+  .demo__copy {
+    display: grid;
+    gap: 24px;
+    position: sticky;
+    top: 120px;
+  }
+  .demo__direct {
+    display: flex;
+    gap: 14px;
+    align-items: baseline;
+    margin-top: 8px;
+  }
+  .demo__direct a {
+    border-bottom: 1px solid var(--hairline-strong);
+    transition: border-color 0.2s ease;
+  }
+  .demo__direct a:hover {
+    border-color: var(--accent);
+  }
+  .form {
+    display: grid;
+    gap: 18px;
+    padding: clamp(24px, 3vw, 36px);
+  }
+  .form__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  label {
+    display: grid;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--text-2);
+  }
+  label em {
+    font-style: normal;
+  }
+  input,
+  select,
+  textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--hairline-strong);
+    border-radius: var(--radius-sm);
+    background: var(--bg);
+    font-size: 15px;
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+  select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23b3bab8' stroke-width='1.5'%3E%3Cpath d='m2 4 4 4 4-4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+  }
+  textarea {
+    resize: vertical;
+  }
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-dim);
+  }
+  :global(.was-validated) input:invalid,
+  :global(.was-validated) select:invalid {
+    border-color: #ff6b6b;
+  }
+  .form .btn {
+    margin-top: 6px;
+    width: 100%;
+  }
+  .form__status {
+    min-height: 1.2em;
+    color: var(--text-2);
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .form__status.is-ok {
+    color: var(--accent);
+  }
+  .form__status.is-error {
+    color: #ff6b6b;
+  }
+  @media (max-width: 900px) {
+    .demo__grid {
+      grid-template-columns: 1fr;
+    }
+    .demo__copy {
+      position: static;
+    }
+  }
+  @media (max-width: 480px) {
+    .form__row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-demo-form]')!;
+  const status = form.querySelector<HTMLElement>('[data-status]')!;
+  const button = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+
+  const setStatus = (text: string, kind: '' | 'ok' | 'error' = '') => {
+    status.textContent = text;
+    status.className = `form__status mono${kind ? ` is-${kind}` : ''}`;
+  };
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    form.classList.add('was-validated');
+    if (!form.checkValidity()) {
+      setStatus('Please fill in the highlighted fields.', 'error');
+      form.querySelector<HTMLElement>(':invalid')?.focus();
+      return;
+    }
+    const data = Object.fromEntries(new FormData(form)) as Record<string, string>;
+    if (data._gotcha) return;
+    delete data._gotcha;
+
+    const endpoint = form.dataset.endpoint;
+    if (!endpoint) {
+      // No form backend configured: hand off to the visitor's mail client.
+      const body = [
+        `Name: ${data.firstName} ${data.lastName}`,
+        `Email: ${data.email}`,
+        `Company: ${data.company}`,
+        `Capture: ${data.capture}`,
+        '',
+        data.message,
+      ].join('\n');
+      const subject = `Demo request: ${data.company}`;
+      window.location.href = `mailto:${form.dataset.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      setStatus('Opening your email client…', 'ok');
+      return;
+    }
+
+    button.disabled = true;
+    setStatus('Sending…');
+    try {
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error(String(res.status));
+      form.reset();
+      form.classList.remove('was-validated');
+      setStatus('Thanks! We will be in touch within one business day.', 'ok');
+    } catch {
+      setStatus(`Something went wrong. Email us at ${form.dataset.email} instead.`, 'error');
+    } finally {
+      button.disabled = false;
+    }
+  });
+</script>

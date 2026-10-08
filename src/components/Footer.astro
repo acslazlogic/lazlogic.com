@@ -1,0 +1,152 @@
+---
+import Logo from './Logo.astro';
+import { SITE } from '../config';
+
+const cols = [
+  {
+    title: 'Platform',
+    links: [
+      { href: '#platform', label: 'Overview' },
+      { href: '#how-it-works', label: 'How it works' },
+      { href: '#developers', label: 'API & SDK', soon: true },
+    ],
+  },
+  {
+    title: 'Solutions',
+    links: [
+      { href: '#solutions', label: 'Survey & Engineering' },
+      { href: '#solutions', label: 'Electric Utilities' },
+      { href: '#solutions', label: 'Mining & Resources' },
+      { href: '#solutions', label: 'Construction & AEC' },
+      { href: '#solutions', label: 'Government & Cities' },
+    ],
+  },
+  {
+    title: 'Company',
+    links: [
+      { href: '#partners', label: 'Design partners' },
+      { href: '#demo', label: 'Book a demo' },
+      { href: `mailto:${SITE.email}`, label: 'Contact' },
+    ],
+  },
+];
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__top">
+      <div class="footer__brand">
+        <Logo />
+        <p>Spatial intelligence for point clouds and geospatial data.</p>
+        <a href="#demo" class="btn btn--ghost btn--sm">Book a demo</a>
+      </div>
+      {
+        cols.map((c) => (
+          <nav class="footer__col" aria-label={c.title}>
+            <span class="mono muted">{c.title}</span>
+            {c.links.map((l) => (
+              <a href={l.href}>
+                {l.label}
+                {'soon' in l && <span class="footer__soon">Soon</span>}
+              </a>
+            ))}
+          </nav>
+        ))
+      }
+    </div>
+    <div class="footer__bottom mono">
+      <span>© {year} LazLogic. All rights reserved.</span>
+      <span>Made for the physical world.</span>
+    </div>
+  </div>
+  <div class="footer__word" aria-hidden="true">LazLogic</div>
+</footer>
+
+<style>
+  .footer {
+    position: relative;
+    border-top: 1px solid var(--hairline);
+    padding-top: 72px;
+    overflow: hidden;
+  }
+  .footer__top {
+    display: grid;
+    grid-template-columns: 1.6fr repeat(3, 1fr);
+    gap: 40px;
+  }
+  .footer__brand {
+    display: grid;
+    gap: 18px;
+    justify-items: start;
+    align-content: start;
+  }
+  .footer__brand p {
+    color: var(--text-3);
+    max-width: 30ch;
+  }
+  .footer__col {
+    display: grid;
+    gap: 12px;
+    align-content: start;
+    font-size: 15px;
+    color: var(--text-2);
+  }
+  .footer__col .mono {
+    margin-bottom: 6px;
+    font-size: 11px;
+  }
+  .footer__col a {
+    transition: color 0.2s ease;
+  }
+  .footer__soon {
+    margin-left: 8px;
+    color: var(--amber);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .footer__col a:hover {
+    color: var(--text);
+  }
+  .footer__bottom {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 72px;
+    padding-top: 24px;
+    border-top: 1px solid var(--hairline);
+    color: var(--text-3);
+    font-size: 11px;
+  }
+  .footer__word {
+    margin-top: 24px;
+    margin-bottom: -0.2em;
+    text-align: center;
+    font-size: clamp(5rem, 21vw, 19rem);
+    font-weight: 650;
+    letter-spacing: -0.06em;
+    line-height: 0.85;
+    color: transparent;
+    -webkit-text-stroke: 1px rgb(255 255 255 / 0.08);
+    background: linear-gradient(180deg, rgb(61 245 196 / 0.12), transparent 75%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    user-select: none;
+  }
+  @media (max-width: 860px) {
+    .footer__top {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .footer__brand {
+      grid-column: 1 / -1;
+    }
+  }
+  @media (max-width: 520px) {
+    .footer__top {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>

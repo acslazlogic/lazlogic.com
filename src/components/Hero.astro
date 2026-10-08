@@ -1,0 +1,441 @@
+---
+const arrow = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M1 7h11M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.6"/></svg>`;
+---
+
+<section class="hero">
+  <div class="hero__grid" aria-hidden="true"></div>
+  <div class="container">
+    <div class="hero__copy">
+      <span class="eyebrow reveal">Spatial intelligence platform</span>
+      <h1 class="reveal" style="--reveal-delay: .05s">
+        Turn point clouds<br /> into <span class="hero__accent">answers.</span>
+      </h1>
+      <div class="hero__row reveal" style="--reveal-delay: .12s">
+        <p class="lede">
+          LazLogic streams billions of points in the browser, classifies every one of them with AI, and lets
+          you query your scans, imagery and GIS layers like a single spatial database.
+        </p>
+        <div class="hero__actions">
+          <a href="#demo" class="btn btn--primary">Book a demo <Fragment set:html={arrow} /></a>
+          <a href="#how-it-works" class="btn btn--ghost">See how it works</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="viewport reveal" style="--reveal-delay: .2s" data-hero-viewport>
+      <div class="viewport__bar">
+        <span class="mono viewport__file"><span class="viewport__dot"></span>urban_corridor_2026-09.laz</span>
+        <div class="viewport__modes" role="presentation">
+          <span class="mono viewport__chip" data-chip="raw">Raw</span>
+          <span class="mono viewport__chip" data-chip="cls">Classified</span>
+        </div>
+        <span class="mono viewport__meta"><span data-hud-points>—</span> pts · EPSG:7856</span>
+      </div>
+      <div class="viewport__stage">
+        <canvas class="viewport__canvas" aria-label="Animated 3D point cloud of a city street being classified into ground, roads, buildings, vegetation, poles and power lines"></canvas>
+        <span class="viewport__corner viewport__corner--tl" aria-hidden="true"></span>
+        <span class="viewport__corner viewport__corner--tr" aria-hidden="true"></span>
+        <span class="viewport__corner viewport__corner--bl" aria-hidden="true"></span>
+        <span class="viewport__corner viewport__corner--br" aria-hidden="true"></span>
+
+        <ul class="viewport__legend" data-hud-legend aria-label="Classes"></ul>
+
+        <div class="viewport__status">
+          <div class="mono viewport__phase" data-hud-phase>Raw · intensity</div>
+          <div class="viewport__progress"><span data-hud-progress></span></div>
+          <div class="viewport__stats mono">
+            <span><b data-hud-features>0</b> features</span>
+            <span><b data-hud-az>0.0</b>° az</span>
+          </div>
+        </div>
+        <span class="mono viewport__hint" aria-hidden="true">Drag to orbit</span>
+        <p class="viewport__fallback">Interactive 3D preview needs WebGL.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    padding-top: clamp(130px, 16vw, 190px);
+    padding-bottom: clamp(64px, 8vw, 110px);
+    overflow: hidden;
+  }
+  .hero__grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--hairline) 1px, transparent 1px),
+      linear-gradient(90deg, var(--hairline) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse 70% 55% at 50% 20%, #000 20%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse 70% 55% at 50% 20%, #000 20%, transparent 75%);
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  .hero__copy {
+    position: relative;
+    display: grid;
+    gap: 28px;
+    margin-bottom: clamp(48px, 6vw, 72px);
+  }
+  .hero__accent {
+    background: linear-gradient(100deg, var(--accent) 10%, #b6ffe9 60%, var(--accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .hero__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 32px 48px;
+    flex-wrap: wrap;
+  }
+  .hero__row .lede {
+    max-width: 46ch;
+  }
+  .hero__actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  /* ---------- Viewport ---------- */
+  .viewport {
+    position: relative;
+    border: 1px solid var(--hairline-strong);
+    border-radius: 18px;
+    background: var(--bg);
+    overflow: hidden;
+    box-shadow:
+      0 0 0 1px rgb(0 0 0 / 0.6),
+      0 40px 120px -40px rgb(61 245 196 / 0.18);
+  }
+  .viewport__bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    height: 46px;
+    padding: 0 16px;
+    border-bottom: 1px solid var(--hairline);
+    background: var(--bg-raised);
+    color: var(--text-3);
+    font-size: 11px;
+  }
+  .viewport__file {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-2);
+    text-transform: none;
+    font-size: 12px;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .viewport__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 10px var(--accent);
+    flex: none;
+  }
+  .viewport__modes {
+    display: flex;
+    gap: 4px;
+    margin-inline: auto;
+    padding: 3px;
+    border: 1px solid var(--hairline);
+    border-radius: 999px;
+  }
+  .viewport__chip {
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 10.5px;
+    transition:
+      background-color 0.4s ease,
+      color 0.4s ease;
+  }
+  .viewport__chip.is-active {
+    background: var(--chip);
+    color: var(--text);
+  }
+  .viewport__chip[data-chip='cls'].is-active {
+    background: var(--accent-dim);
+    color: var(--accent);
+  }
+  .viewport__meta {
+    font-size: 11px;
+    white-space: nowrap;
+  }
+  .viewport__stage {
+    position: relative;
+    height: clamp(420px, 56vw, 680px);
+  }
+  .viewport__canvas {
+    width: 100%;
+    height: 100%;
+    cursor: grab;
+    touch-action: pan-y;
+  }
+  .viewport__canvas:global(.is-dragging) {
+    cursor: grabbing;
+  }
+  .viewport__corner {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-color: rgb(255 255 255 / 0.35);
+    border-style: solid;
+    border-width: 0;
+    pointer-events: none;
+  }
+  .viewport__corner--tl {
+    top: 16px;
+    left: 16px;
+    border-top-width: 1px;
+    border-left-width: 1px;
+  }
+  .viewport__corner--tr {
+    top: 16px;
+    right: 16px;
+    border-top-width: 1px;
+    border-right-width: 1px;
+  }
+  .viewport__corner--bl {
+    bottom: 16px;
+    left: 16px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+  }
+  .viewport__corner--br {
+    bottom: 16px;
+    right: 16px;
+    border-bottom-width: 1px;
+    border-right-width: 1px;
+  }
+  .viewport__legend {
+    position: absolute;
+    left: 32px;
+    bottom: 32px;
+    margin: 0;
+    padding: 14px 16px;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    gap: 7px 22px;
+    background: rgb(11 12 12 / 0.72);
+    border: 1px solid var(--hairline);
+    border-radius: 10px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    pointer-events: none;
+  }
+  .viewport__legend :global(li) {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-2);
+    transition: opacity 0.5s ease;
+  }
+  .viewport__legend :global(i) {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+  }
+  .viewport__legend :global(li.is-dim) {
+    opacity: 0.28;
+  }
+  .viewport__status {
+    position: absolute;
+    right: 32px;
+    bottom: 32px;
+    width: 240px;
+    padding: 14px 16px;
+    background: rgb(11 12 12 / 0.72);
+    border: 1px solid var(--hairline);
+    border-radius: 10px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    pointer-events: none;
+  }
+  .viewport__phase {
+    color: var(--text);
+    font-size: 11px;
+  }
+  .viewport__progress {
+    height: 2px;
+    margin: 10px 0 12px;
+    background: var(--hairline-strong);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .viewport__progress span {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: var(--accent);
+    box-shadow: 0 0 10px var(--accent);
+  }
+  .viewport__stats {
+    display: flex;
+    justify-content: space-between;
+    color: var(--text-3);
+    font-size: 10.5px;
+  }
+  .viewport__stats b {
+    color: var(--text);
+    font-weight: 500;
+  }
+  .viewport__hint {
+    position: absolute;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--text-3);
+    font-size: 10.5px;
+    pointer-events: none;
+  }
+  .viewport__fallback {
+    display: none;
+    position: absolute;
+    inset: 0;
+    place-items: center;
+    color: var(--text-3);
+  }
+  .viewport:global(.no-webgl) .viewport__fallback {
+    display: grid;
+  }
+
+  @media (max-width: 720px) {
+    .viewport__modes,
+    .viewport__hint {
+      display: none;
+    }
+    .viewport__meta {
+      margin-left: auto;
+    }
+    .viewport__legend {
+      left: 14px;
+      bottom: 14px;
+      right: 14px;
+      grid-template-columns: repeat(3, auto);
+      gap: 6px 14px;
+      padding: 10px 12px;
+    }
+    .viewport__legend :global(li) {
+      font-size: 10px;
+    }
+    .viewport__status {
+      top: 14px;
+      right: 14px;
+      bottom: auto;
+      width: 190px;
+      padding: 10px 12px;
+    }
+    .viewport__corner {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import { cityScene, CLASS_COLORS } from '../scripts/scenes';
+  import { PointCloudView } from '../scripts/pointcloud';
+
+  const root = document.querySelector<HTMLElement>('[data-hero-viewport]')!;
+  const canvas = root.querySelector('canvas')!;
+  const $ = (sel: string) => root.querySelector<HTMLElement>(sel)!;
+  const phaseEl = $('[data-hud-phase]');
+  const progressEl = $('[data-hud-progress]');
+  const featuresEl = $('[data-hud-features]');
+  const azEl = $('[data-hud-az]');
+  const legendEl = $('[data-hud-legend]');
+  const chips = { raw: $('[data-chip="raw"]'), cls: $('[data-chip="cls"]') };
+
+  const small = window.matchMedia('(max-width: 720px)').matches;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const scene = cityScene(11, small ? 0.55 : 1);
+  $('[data-hud-points]').textContent = scene.count.toLocaleString('en-US');
+
+  legendEl.innerHTML = scene.legend
+    .map((l) => `<li class="is-dim"><i style="background:${CLASS_COLORS[l.cls]}"></i>${l.name}</li>`)
+    .join('');
+  const legendItems = [...legendEl.children] as HTMLElement[];
+  const objects = [...scene.objects].sort((a, b) => a - b);
+
+  const [x0, x1] = [scene.bounds.min[0] - 4, scene.bounds.max[0] + 4];
+  // Timeline (seconds): raw hold → classification sweep → classified hold → fade back.
+  const T = { raw: 2.2, sweep: 6, hold: 4.5, fade: 1.2 };
+  const total = T.raw + T.sweep + T.hold + T.fade;
+  let lastPhase = '';
+  let lastHud = 0;
+
+  const setPhase = (key: 'raw' | 'sweep' | 'hold', label: string) => {
+    if (lastPhase === label) return;
+    lastPhase = label;
+    phaseEl.textContent = label;
+    chips.raw.classList.toggle('is-active', key === 'raw');
+    chips.cls.classList.toggle('is-active', key !== 'raw');
+  };
+
+  const tick = (now: number, view: PointCloudView) => {
+    let sweep: number;
+    let fade = 1;
+    let progress: number;
+    if (reduced) {
+      sweep = (x0 + x1) / 2 + 20;
+      progress = 0.6;
+      setPhase('sweep', 'Classified · partial');
+    } else {
+      const t = (now / 1000) % total;
+      if (t < T.raw) {
+        sweep = x0;
+        progress = 0;
+        setPhase('raw', 'Raw · intensity');
+      } else if (t < T.raw + T.sweep) {
+        const k = (t - T.raw) / T.sweep;
+        const e = k < 0.5 ? 2 * k * k : 1 - (-2 * k + 2) ** 2 / 2;
+        sweep = x0 + (x1 - x0) * e;
+        progress = e;
+        setPhase('sweep', 'Classifying');
+      } else if (t < T.raw + T.sweep + T.hold) {
+        sweep = x1;
+        progress = 1;
+        setPhase('hold', `Classified · ${scene.legend.length} classes`);
+      } else {
+        sweep = x1;
+        progress = 1;
+        fade = 1 - (t - T.raw - T.sweep - T.hold) / T.fade;
+        setPhase('raw', 'Raw · intensity');
+      }
+    }
+    view.sweep = sweep;
+    view.fade = fade;
+
+    if (now - lastHud > 80) {
+      lastHud = now;
+      progressEl.style.width = `${(progress * 100).toFixed(1)}%`;
+      let n = 0;
+      while (n < objects.length && objects[n] < sweep - 6) n++;
+      featuresEl.textContent = String(fade < 1 ? Math.round(n * fade) : n);
+      const az = ((((view.azimuth * 180) / Math.PI) % 360) + 360) % 360;
+      azEl.textContent = az.toFixed(1);
+      const lit = fade > 0.5 && progress > 0.02;
+      legendItems.forEach((li, i) => li.classList.toggle('is-dim', !lit || progress < i / legendItems.length));
+    }
+  };
+
+  try {
+    const view = new PointCloudView(canvas, { mode: 'sweep', onTick: tick, pointSize: small ? 0.48 : 0.4 });
+    view.setScene(scene);
+  } catch {
+    root.classList.add('no-webgl');
+  }
+</script>

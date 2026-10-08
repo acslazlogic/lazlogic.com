@@ -1,0 +1,85 @@
+---
+const formats = ['LAS', 'LAZ', 'COPC', 'E57', 'PLY', 'PTS', 'GeoTIFF', 'COG', '3D Tiles', 'IFC', 'DXF', 'DGN', 'LandXML', 'GeoJSON', 'Shapefile', 'GeoPackage', 'OBJ', 'Esri I3S'];
+---
+
+<section class="formats" aria-label="Supported formats">
+  <div class="container formats__inner">
+    <p class="mono formats__label">Works with the data you already capture</p>
+    <div class="formats__track">
+      <ul class="formats__row">
+        {formats.map((f) => <li>{f}</li>)}
+      </ul>
+      <ul class="formats__row" aria-hidden="true">
+        {formats.map((f) => <li>{f}</li>)}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .formats {
+    border-block: 1px solid var(--hairline);
+    padding-block: 28px;
+  }
+  .formats__inner {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+  }
+  .formats__label {
+    flex: none;
+    max-width: 170px;
+    color: var(--text-3);
+    font-size: 11px;
+    line-height: 1.5;
+  }
+  .formats__track {
+    display: flex;
+    overflow: hidden;
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  }
+  .formats__row {
+    display: flex;
+    flex: none;
+    gap: 52px;
+    margin: 0;
+    padding: 0 26px;
+    list-style: none;
+    animation: marquee 48s linear infinite;
+  }
+  .formats__row li {
+    font-family: var(--font-mono);
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text-2);
+    white-space: nowrap;
+  }
+  @keyframes marquee {
+    to {
+      transform: translateX(-100%);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .formats__row {
+      animation: none;
+      flex-wrap: wrap;
+    }
+    .formats__row[aria-hidden] {
+      display: none;
+    }
+  }
+  @media (max-width: 720px) {
+    .formats__inner {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 18px;
+    }
+    .formats__label {
+      max-width: none;
+    }
+    .formats__track {
+      width: 100%;
+    }
+  }
+</style>

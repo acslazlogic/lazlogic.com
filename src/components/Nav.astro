@@ -1,0 +1,158 @@
+---
+import Logo from './Logo.astro';
+
+const links = [
+  { href: '/#platform', label: 'Platform' },
+  { href: '/#how-it-works', label: 'How it works' },
+  { href: '/#solutions', label: 'Solutions' },
+  { href: '/#developers', label: 'Developers' },
+  { href: '/#partners', label: 'Design partners' },
+];
+---
+
+<header class="nav" data-nav>
+  <div class="container nav__inner">
+    <a href="/" class="nav__brand" aria-label="LazLogic home"><Logo /></a>
+    <nav class="nav__links" aria-label="Primary">
+      {links.map((l) => <a href={l.href}>{l.label}</a>)}
+    </nav>
+    <div class="nav__cta">
+      <a href="/#demo" class="btn btn--primary btn--sm">Book a demo</a>
+      <button class="nav__toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu" data-nav-toggle>
+        <span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <div class="nav__mobile" id="mobile-menu" hidden data-nav-menu>
+    <nav class="container" aria-label="Mobile">
+      {links.map((l) => <a href={l.href}>{l.label}</a>)}
+      <a href="/#demo" class="btn btn--primary">Book a demo</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .nav {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 50;
+    transition:
+      background-color 0.3s ease,
+      border-color 0.3s ease,
+      backdrop-filter 0.3s ease;
+    border-bottom: 1px solid transparent;
+  }
+  .nav.is-scrolled,
+  .nav.is-open {
+    background: rgb(11 12 12 / 0.78);
+    backdrop-filter: blur(14px) saturate(1.4);
+    -webkit-backdrop-filter: blur(14px) saturate(1.4);
+    border-bottom-color: var(--hairline);
+  }
+  .nav__inner {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    height: 72px;
+  }
+  .nav__links {
+    display: flex;
+    gap: 30px;
+    margin-left: auto;
+    font-size: 15px;
+    color: var(--text-2);
+  }
+  .nav__links a {
+    transition: color 0.2s ease;
+  }
+  .nav__links a:hover {
+    color: var(--text);
+  }
+  .nav__cta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .nav__toggle {
+    display: none;
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--hairline-strong);
+    border-radius: 999px;
+    background: transparent;
+    cursor: pointer;
+    position: relative;
+  }
+  .nav__toggle span {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    height: 1.5px;
+    background: var(--text);
+    transition: transform 0.25s ease;
+  }
+  .nav__toggle span:first-child {
+    top: 16px;
+  }
+  .nav__toggle span:last-child {
+    top: 22px;
+  }
+  .nav.is-open .nav__toggle span:first-child {
+    transform: translateY(3px) rotate(45deg);
+  }
+  .nav.is-open .nav__toggle span:last-child {
+    transform: translateY(-3px) rotate(-45deg);
+  }
+  .nav__mobile nav {
+    display: grid;
+    gap: 4px;
+    padding-block: 12px 24px;
+  }
+  .nav__mobile a:not(.btn) {
+    padding: 14px 0;
+    font-size: 20px;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .nav__mobile .btn {
+    margin-top: 18px;
+  }
+
+  @media (max-width: 960px) {
+    .nav__links {
+      display: none;
+    }
+    .nav__cta {
+      margin-left: auto;
+    }
+    .nav__toggle {
+      display: block;
+    }
+  }
+  @media (max-width: 480px) {
+    .nav__cta > .btn {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const nav = document.querySelector<HTMLElement>('[data-nav]')!;
+  const toggle = nav.querySelector<HTMLButtonElement>('[data-nav-toggle]')!;
+  const menu = nav.querySelector<HTMLElement>('[data-nav-menu]')!;
+
+  const onScroll = () => nav.classList.toggle('is-scrolled', window.scrollY > 12);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  const setOpen = (open: boolean) => {
+    nav.classList.toggle('is-open', open);
+    menu.hidden = !open;
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  };
+  toggle.addEventListener('click', () => setOpen(!nav.classList.contains('is-open')));
+  menu.addEventListener('click', (e) => {
+    if ((e.target as HTMLElement).closest('a')) setOpen(false);
+  });
+  window.matchMedia('(min-width: 961px)').addEventListener('change', (e) => e.matches && setOpen(false));
+</script>

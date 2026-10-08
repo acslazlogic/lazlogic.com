@@ -1,0 +1,24 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+---
+
+<Base title="Page not found · LazLogic">
+  <Nav />
+  <main class="nf container">
+    <span class="eyebrow">Error 404 · no points found</span>
+    <h1>Nothing at these coordinates.</h1>
+    <p class="lede">The page you are looking for has moved, or never existed.</p>
+    <a href="/" class="btn btn--primary">Back to home</a>
+  </main>
+</Base>
+
+<style>
+  .nf {
+    min-height: 100vh;
+    display: grid;
+    align-content: center;
+    justify-items: start;
+    gap: 28px;
+  }
+</style>

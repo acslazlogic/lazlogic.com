@@ -1,0 +1,65 @@
+---
+// TODO: placeholder figures — replace with real, defensible numbers before launch.
+const stats = [
+  { value: '10B+', label: 'points in a single streamed dataset' },
+  { value: '20+', label: 'point cloud, raster, vector and CAD formats' },
+  { value: '<1 day', label: 'from upload to classified, vectorised features' },
+  { value: '0', label: 'desktop installs, plugins or workstations' },
+];
+---
+
+<section class="stats" aria-label="LazLogic at a glance">
+  <div class="container stats__grid">
+    {
+      stats.map((s, i) => (
+        <div class="stat reveal" style={`--reveal-delay:${i * 0.06}s`}>
+          <span class="stat__value">{s.value}</span>
+          <span class="stat__label">{s.label}</span>
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .stats {
+    padding-block: clamp(56px, 7vw, 96px);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .stats__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .stat {
+    display: grid;
+    gap: 10px;
+    align-content: start;
+    padding: 4px 28px;
+    border-left: 1px solid var(--hairline);
+  }
+  .stat:first-child {
+    padding-left: 0;
+    border-left: 0;
+  }
+  .stat__value {
+    font-size: clamp(2.6rem, 4.6vw, 4rem);
+    font-weight: 520;
+    letter-spacing: -0.045em;
+    line-height: 1;
+  }
+  .stat__label {
+    color: var(--text-3);
+    font-size: 15px;
+    max-width: 22ch;
+  }
+  @media (max-width: 860px) {
+    .stats__grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 40px 0;
+    }
+    .stat:nth-child(3) {
+      padding-left: 0;
+      border-left: 0;
+    }
+  }
+</style>
